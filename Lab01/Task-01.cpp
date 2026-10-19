@@ -3,12 +3,16 @@ using namespace std;
 
 const int MAX_SIZE = 100;
 
+/**
+ * 顺序表结构
+ */
 struct SqList {
   int *data = nullptr;
   int length = 0;
   int capacity = 0;
 };
 
+// 初始化顺序表 L，分配内存空间并设置初始长度和容量
 bool init_list(SqList &L) {
   if (L.data != nullptr) {
     return false;
@@ -20,6 +24,7 @@ bool init_list(SqList &L) {
   return true;
 }
 
+// 销毁顺序表 L，释放其占用的内存空间
 void destroy_list(SqList &L) {
   if (L.data != nullptr) {
     delete[] L.data;
@@ -29,12 +34,14 @@ void destroy_list(SqList &L) {
   }
 }
 
+// 清空顺序表 L 中的所有元素
 void clear_list(SqList &L) {
   if (L.data != nullptr) {
     L.length = 0;
   }
 }
 
+// 判断顺序表 L 是否为空
 bool list_empty(SqList &L) {
   if (L.data != nullptr) {
     return (L.length == 0);
@@ -42,6 +49,7 @@ bool list_empty(SqList &L) {
   return false;
 }
 
+// 获取顺序表 L 的长度
 int list_length(SqList &L) {
   if (L.data != nullptr) {
     return L.length;
@@ -49,6 +57,7 @@ int list_length(SqList &L) {
   return -1;
 }
 
+// 获取顺序表 L 中第 i 个元素的值，并将其赋给 e
 bool get_elem(const SqList &L, int i, int &e) {
   if (L.data != nullptr && i >= 1 && i <= L.length) {
     e = L.data[i - 1];
@@ -57,6 +66,7 @@ bool get_elem(const SqList &L, int i, int &e) {
   return false;
 }
 
+// 找到元素 e 在顺序表 L 中的位置，若存在则返回其位置（从 1 开始），否则返回 0。
 int locate_elem(const SqList &L, int e) {
   if (L.data == nullptr) {
     return 0;
@@ -70,6 +80,7 @@ int locate_elem(const SqList &L, int e) {
   return 0;
 }
 
+// 将顺序表 L 中第 i 个元素的值修改为 e，并将原值赋给 e
 bool set_elem(SqList &L, int i, int &e) {
   if (L.data != nullptr && i >= 1 && i <= L.length) {
     int old_value = L.data[i - 1];
@@ -77,8 +88,10 @@ bool set_elem(SqList &L, int i, int &e) {
     e = old_value;
     return true;
   }
+  return false;
 }
 
+// 找到顺序表 L 中元素 cur_e 的前驱元素，若存在则返回 true 并将前驱元素赋给 pre_e
 bool prior_elem(const SqList &L, int cur_e, int &pre_e) {
   int pos = locate_elem(L, cur_e);
   if (pos > 1) {
@@ -88,6 +101,7 @@ bool prior_elem(const SqList &L, int cur_e, int &pre_e) {
   return false;
 }
 
+// 找到顺序表 L 中元素 cur_e 的后继元素，若存在则返回 true 并将后继元素赋给 next_e
 bool next_elem(const SqList &L, int cur_e, int &next_e) {
   int pos = locate_elem(L, cur_e);
 
@@ -98,6 +112,7 @@ bool next_elem(const SqList &L, int cur_e, int &next_e) {
   return false;
 }
 
+// 遍历顺序表 L 中的所有元素并打印
 void list_traverse(const SqList &L) {
   if (L.data == nullptr) {
     cout << "List is not initialized." << endl;
@@ -111,6 +126,7 @@ void list_traverse(const SqList &L) {
   cout << endl;
 }
 
+// 在顺序表 L 的第 i 个位置插入元素 e
 bool insert_elem(SqList &L, int i, int e) {
   if (L.data != nullptr && i >= 1 && i <= L.length + 1 &&
       L.length + 1 <= L.capacity) {
@@ -129,17 +145,17 @@ int main() {
 
   init_list(L);
 
-  cout << "��ʼ����" << endl;
+  cout << "初始化: " << endl;
   cout << list_empty(L) << " " << int(list_length(L)) << endl;
 
-  // ��ʱ��������Ԫ�����ڲ���
+  // 初始化线性表
   L.data[0] = 10;
   L.data[1] = 20;
   L.length = 2;
 
   int values[] = {10, 20, 30, 40, 50};
 
-  cout << "��������Ԫ�غ�" << endl;
+  cout << "初始化后: " << endl;
   cout << list_empty(L) << " " << int(list_length(L)) << endl;
 
   int e1 = -1;
@@ -148,7 +164,7 @@ int main() {
 
   clear_list(L);
 
-  cout << "��պ�" << endl;
+  cout << "清除后: " << endl;
   cout << list_empty(L) << " " << int(list_length(L)) << endl;
 
   for (int i = 0; i < 5; i++) {
@@ -161,17 +177,18 @@ int main() {
   cout << locate_elem(L, 99) << endl;
 
   int e2;
+  cout << "查找前驱和后继:" << endl;
 
   if (prior_elem(L, 30, e2)) {
-    cout << "30��ǰ����" << e2 << endl;
+    cout << "30前驱: " << e2 << endl;
   } else {
-    cout << "ǰ��������" << endl;
+    cout << "错误" << endl;
   }
 
   if (next_elem(L, 30, e2)) {
-    cout << "30�ĺ�̣�" << e2 << endl;
+    cout << "30后继: " << e2 << endl;
   } else {
-    cout << "��̲�����" << endl;
+    cout << "错误" << endl;
   }
 
   list_traverse(L);
@@ -179,7 +196,7 @@ int main() {
   int e = 99;
 
   if (set_elem(L, 2, e)) {
-    cout << "�޸ĳɹ���ԭֵ��" << e << endl;
+    cout << "修改后: " << e << endl;
   }
 
   list_traverse(L);
@@ -199,9 +216,9 @@ int main() {
   insert_elem(L2, 3, 99);
 
   list_traverse(L2);
-  cout << "��ǰ���ȣ�" << list_length(L2) << endl;
+  cout << "长度: " << list_length(L2) << endl;
 
-  cout << "���ٺ�" << endl;
+  cout << "状态: " << endl;
   cout << (L.data == nullptr) << " " << L2.length << " " << L2.capacity << endl;
 
   return 0;
