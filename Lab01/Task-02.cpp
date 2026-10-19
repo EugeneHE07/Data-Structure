@@ -215,113 +215,144 @@ Status SetElem(SListInfo& L, int i, ElemType& e) {
     return OK;
 }
 
+Status InsertElem(SListInfo& L, int i, ElemType e) {
+    if (L.head == nullptr || i < 1 || i > L.length + 1) {
+        cout << "Invalid position or uninitialized list." << endl;
+        return ERROR;
+    }
+
+    LNode* p = L.head;
+    
+    for (int j = 1; j < i; j++) {
+        p = p->next;
+    }
+
+    LNode* newNode = (LNode*)malloc(sizeof(LNode));
+    if (!newNode) {
+        cout << "Memory allocation failed." << endl;
+        return ERROR;
+    }
+    
+    newNode->data = e;
+    newNode->next = p->next;
+    p->next = newNode;
+
+    if (p == L.tail) {
+        L.tail = newNode;
+    }
+
+    L.length++;
+    return OK;
+}
+
+Status DeleteElem(SListInfo& L, int i, ElemType& e) {
+    if (L.head == nullptr || i < 1 || i > L.length) {
+        cout << "Invalid position or uninitialized list." << endl;
+        return ERROR;
+    }
+
+    LNode* p = L.head;
+    
+    for (int j = 1; j < i; j++) {
+        p = p->next;
+    }
+
+    LNode* q = p->next;
+    e = q->data;
+    p->next = q->next;
+
+    if (q == L.tail) {
+        L.tail = p;
+    }
+
+    free(q);
+    L.length--;
+    return OK;
+}
+
 // !以下测试代码部分为了验证上述函数的正确性，部分测试角度为AI生成，以全面测试各功能函数正确性
 int main() {
     SListInfo L{};
     ElemType e = 0;
-    Status s;
     cout << boolalpha;
 
-    // 1. 初始化、判空和长度
-    s = InitList(L);
-    cout << "Init: " << (s == OK) << endl;
-    if (s != OK) return 1;
+    // 1. 初始化和建立测试链表
+    if (InitList(L) != OK) return 1;
 
-    cout << "Empty/Length: " << ListEmpty(L)
-         << " / " << ListLength(L) << endl;
+    cout << "Init: " << (L.head != nullptr)
+         << ", Empty: " << ListEmpty(L) << endl;
 
-    // 2. 创建测试链表 10 -> 20 -> 30
-    int values[] = {10, 20, 30};
-    for (int v : values) {
-        LNode* p = (LNode*)malloc(sizeof(LNode));
-        if (!p) {
+    for (int i = 1; i <= 4; i++)
+        if (InsertElem(L, i, i * 10) != OK) {
             DestroyList(L);
             return 1;
         }
-        p->data = v;
-        p->next = nullptr;
-        L.tail->next = p;
-        L.tail = p;
-        L.length++;
-    }
 
-    cout << "Traverse: ";
+    cout << "Initial: ";
     ListTraverse(L);
-    cout << endl;
+    cout << "Length: " << ListLength(L) << endl;
 
-    // 3. 测试按位置访问、按值查找、前驱和后继
-    GetElem(L, 2, e);
-    cout << "Get(2): " << e << endl;
-    cout << "Locate(20): " << LocateElem(L, 20) << endl;
-    cout << "Locate(99): " << LocateElem(L, 99) << endl;
+    // 2. 测试访问、查找、前驱和后继
+    GetElem(L, 3, e);
+    cout << "Get(3): " << e
+         << ", Locate(30): " << LocateElem(L, 30) << endl;
 
     PriorElem(L, 20, e);
     cout << "Prior(20): " << e << endl;
-
     NextElem(L, 20, e);
     cout << "Next(20): " << e << endl;
 
-    cout << "Prior(10) invalid: "
-         << (PriorElem(L, 10, e) == ERROR) << endl;
-    cout << "Next(30) invalid: "
-         << (NextElem(L, 30, e) == ERROR) << endl;
-
-    // 4. 修改中间元素，检查旧值与新值
+    // 3. 测试修改元素并返回旧值
     e = 25;
-    s = SetElem(L, 2, e);
-    cout << "Set(2,25): " << (s == OK)
-         << ", Old: " << e << endl;
-
-    GetElem(L, 2, e);
-    cout << "Get(2) after Set: " << e << endl;
-
-    // 5. 修改首元素和尾元素
-    e = 5;
-    SetElem(L, 1, e);
-    cout << "Set(1,5) Old: " << e << endl;
-
-    e = 35;
-    SetElem(L, 3, e);
-    cout << "Set(3,35) Old: " << e << endl;
-
+    SetElem(L, 2, e);
+    cout << "Set Old: " << e << endl;
     cout << "After Set: ";
     ListTraverse(L);
-    cout << endl;
 
-    // 6. 测试非法位置，e 应保持不变
-    e = 99;
-    s = SetElem(L, 0, e);
-    cout << "Set(0) invalid: "
-         << (s == ERROR && e == 99) << endl;
+    // 4. 测试非法删除，链表和 e 应保持不变
+    e = 777;
+    bool invalid = (DeleteElem(L, 0, e) == ERROR &&
+                    DeleteElem(L, 5, e) == ERROR &&
+                    e == 777 && ListLength(L) == 4);
+    cout << "Invalid Delete: " << invalid << endl;
 
-    s = SetElem(L, 4, e);
-    cout << "Set(4) invalid: "
-         << (s == ERROR && e == 99) << endl;
+    // 5. 依次删除头部、中间、尾部和唯一结点
+    DeleteElem(L, 1, e);
+    cout << "Delete Head: " << e << endl;
 
-    // 7. 清空、判空以及空表修改
-    cout << "Clear: " << (ClearList(L) == OK) << endl;
-    cout << "Empty/Length: " << ListEmpty(L)
-         << " / " << ListLength(L) << endl;
+    L.pCurNode = L.head->next->next;
+    DeleteElem(L, 2, e);
+    cout << "Delete Middle: " << e
+         << ", Cur Valid: "
+         << (L.pCurNode == L.head->next) << endl;
 
-    cout << "Set Empty invalid: "
-         << (SetElem(L, 1, e) == ERROR) << endl;
+    DeleteElem(L, 2, e);
+    cout << "Delete Tail: " << e
+         << ", Tail Valid: "
+         << (L.tail == L.head->next) << endl;
+
+    DeleteElem(L, 1, e);
+    cout << "Delete Last: " << e
+         << ", Empty: " << ListEmpty(L)
+         << ", Tail=head: " << (L.tail == L.head)
+         << ", Cur=head: " << (L.pCurNode == L.head)
+         << endl;
+
+    cout << "Delete Empty: "
+         << (DeleteElem(L, 1, e) == ERROR) << endl;
+
+    // 6. 测试清空非空链表、重复清空
+    InsertElem(L, 1, 99);
+    InsertElem(L, 2, 100);
+
+    cout << "Clear: " << (ClearList(L) == OK)
+         << ", Length: " << ListLength(L) << endl;
     cout << "Clear Again: " << (ClearList(L) == OK) << endl;
 
-    // 8. 清空后复用，并销毁非空链表
-    LNode* p = (LNode*)malloc(sizeof(LNode));
-    if (!p) {
-        DestroyList(L);
-        return 1;
-    }
-    p->data = 50;
-    p->next = nullptr;
-    L.tail->next = p;
-    L.tail = p;
-    L.length++;
-
+    // 7. 清空后复用并销毁非空链表
+    InsertElem(L, 1, 88);
     cout << "Reuse: ";
     ListTraverse(L);
-    cout << endl;
 
     cout << "Destroy: " << (DestroyList(L) == OK) << endl;
     cout << "Reset: " << (L.head == nullptr &&
@@ -331,4 +362,6 @@ int main() {
 
     return 0;
 }
+
+
 
