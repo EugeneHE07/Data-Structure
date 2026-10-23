@@ -15,13 +15,12 @@ int main() {
     cin >> k >> t;
 
     if (k == 0) {
-      total += t; // 经过道路
+      total += t;
     } else if (k == 1) {
-      total += t; // 等待红灯
+      total += t; 
     } else if (k == 2) {
-      total += t + r; // 等待黄灯及红灯
+      total += t + r; 
     } else if (k == 3) {
-      // 绿灯直接通过，无需等待
     }
   }
 

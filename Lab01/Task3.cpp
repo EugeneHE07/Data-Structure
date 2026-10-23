@@ -8,19 +8,20 @@ typedef int Status;
 const int OK = 1;
 const int ERROR = 0;
 
-// 单链表结点
+
 struct LNode {
     ElemType data;
     LNode* next;
 };
 
-// 单链表管理结构
+
 struct SListInfo {
     LNode* head = nullptr;
     LNode* tail = nullptr;
     int length = 0;
 };
 
+/*
 Status InitList(SListInfo& L) {
     if (L.head != nullptr) {
         cout << "List already initialized." << endl;
@@ -154,7 +155,7 @@ Status ListTraverse(const SListInfo& L) {
 
     return OK;
 }
-
+*/
 
 Status RemoveDuplicatesSorted(SListInfo& L) {
     if (L.head == nullptr) {
@@ -219,6 +220,7 @@ Status RemoveDuplicatesUnsorted(SListInfo& L) {
     return OK;
 }
 
+/*
 int main() {
     SListInfo L{};
     cout << boolalpha;
@@ -265,3 +267,4 @@ int main() {
 
     return 0;
 }
+*/
