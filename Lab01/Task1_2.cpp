@@ -265,6 +265,10 @@ Status DeleteElem(SListInfo& L, int i, ElemType& e) {
         L.tail = p;
     }
 
+    if (L.pCurNode == q) {
+        L.pCurNode = p;
+    }
+    
     free(q);
     L.length--;
     return OK;
