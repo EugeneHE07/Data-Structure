@@ -130,7 +130,7 @@ Status Pop(SqStack& S,ElemType& e) {
     return OK;
 }
 
-int main() {
+/*int main() {
     SqStack S;
     ElemType e = -1;
 
@@ -226,4 +226,4 @@ int main() {
     cout << "Final destroy: " << DestroyStack(S) << endl;
 
     return 0;
-}
+}*/
